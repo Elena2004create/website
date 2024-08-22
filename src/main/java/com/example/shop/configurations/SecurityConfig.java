@@ -9,8 +9,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
@@ -20,25 +23,28 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig{
     private final CustomUserDetailsService userDetailsService;
 
-    @Bean
+    /*@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/product/**", "/images/**", "/registration", "/user/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**",  "/", "/product/**", "/images/**", "/registration", "/user/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage("/login")
-                                .permitAll()
+                                .disable()
+                                *//*.loginPage("/login")
+                                .permitAll()*//*
                 )
                 .logout(logout ->
-                        logout.permitAll()
+                        logout.disable()
+                        *//*logout.permitAll()*//*
                 );
 
         return http.build();
-    }
+    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,5 +59,22 @@ public class SecurityConfig{
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
         return authenticationManagerBuilder.build();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager userDetailsService() {
+        UserDetails user = User.withUsername("user")
+                .password(passwordEncoder().encode("userPass"))
+                .roles("USER")
+                .build();
+        return new InMemoryUserDetailsManager(user);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest()
+                .permitAll())
+                .csrf(csrf -> csrf.disable());
+        return http.build();
     }
 }

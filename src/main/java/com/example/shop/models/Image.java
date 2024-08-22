@@ -1,6 +1,8 @@
 package com.example.shop.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +16,7 @@ import org.junit.platform.engine.TestDescriptor;
 @NoArgsConstructor
 public class Image {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -38,5 +40,7 @@ public class Image {
 
     //Отношение таблиц что то типа внешнего ключа
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JsonBackReference
+    @JsonIgnore
     private Product product;
 }

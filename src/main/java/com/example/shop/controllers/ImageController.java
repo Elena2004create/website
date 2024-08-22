@@ -31,12 +31,6 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found");
         }
 
-        /*return ResponseEntity.ok()
-                .header("fileName", image.getOriginalFileName())
-                .contentType(MediaType.valueOf(image.getContentType()))
-                .contentLength(image.getSize())
-                .body(new InputStreamResource(new ByteArrayInputStream(image.getBytes())));*/
-
         String encodedFileName = URLEncoder.encode(image.getOriginalFileName(), StandardCharsets.UTF_8);
 
         return ResponseEntity.ok()
